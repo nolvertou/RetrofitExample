@@ -17,8 +17,11 @@
 
 package com.example.android.marsrealestate.network
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -47,8 +50,15 @@ private val moshi = Moshi.Builder()
 // 11.1 We'll let retrofit know that it can use Moshi to convert the JSON response into Kotlin objects.
 //      So, we can then delete the ScalarsConverterFactory since we won't need it any longer and
 //      remove
+// TODO (15)  Add a CoroutineCallAdapterFactory to the Retrofit builder to enable Retrofit to produce
+//  a coroutines-based API
+// 15.1 CallAdapters add the ability for Retrofit to create APIs that return something other
+//      than the default call class.
+// 15.2 In this case, the CoroutineCallAdapterFactory allows us to replace the call and get properties
+//      with a coroutine deferred.
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
     .build()
 
@@ -72,7 +82,18 @@ interface MarsApiService{
     // 3.4 Call object is used to start the request and create a retofit service
     fun getProperties():
             // TODO (12) Update the MarsApiService to return a List of MarsProperty Objects
-            Call<List<MarsProperty>>
+            // TODO (16) We can replace the call return value and getProperties with a deferred
+            //  from coroutines
+            // 16.1 Deferred value is a non-blocking cancellable future - It is a Job that has a result.
+            // 16.2 As a reminder, a coroutine jobe provides a way of cancelling and determining the
+            //  state of a coroutine
+            // 16.3 But unlike a job, deferred has a method called await. Await is a suspend function
+            //  on the deferred. It causes the code to await without blocking in true coroutines fashion
+            //  fashion until the value is ready and then the value is return.
+            // 16.4 Retrofit will return a deferred and then you await the result which has the
+            //  appearance o synchronous code. And if there is an error, await will return that
+            //  throwing an exception
+            Deferred<List<MarsProperty>>
 }
 
 // TODO (04) Create the MarsApi object using Retrofit to implement the MarsApiService

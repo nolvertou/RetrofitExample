@@ -23,6 +23,10 @@ import androidx.lifecycle.ViewModel
 import com.example.android.marsrealestate.network.MarsApi
 import com.example.android.marsrealestate.network.MarsApiService
 import com.example.android.marsrealestate.network.MarsProperty
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
 import javax.security.auth.callback.Callback
@@ -39,6 +43,15 @@ class OverviewViewModel : ViewModel() {
     val response: LiveData<String>
         get() = _response
 
+    // TODO (17) Add variables for a coroutine Job and a CoroutineScope using the Main Dispatcher
+    // 17.1 Create Job because we are working with Coroutines
+    private var viewModelJob = Job()
+    // 17.2 Then we use that job to create a coroutine scope with the main dispatcher, which uses the
+    //  UI thread. Since Retrofit does all of its work on a background thread for us, there's no
+    //  reason to use any other thread for our scope. This allows us to easily update the value
+    //  of our MutableLiveData when we get a result.
+    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
+
     /**
      * Call getMarsRealEstateProperties() on init so we can display status immediately.
      */
@@ -50,37 +63,37 @@ class OverviewViewModel : ViewModel() {
      * Sets the value of the status LiveData to the Mars API status.
      */
     private fun getMarsRealEstateProperties() {
-        // TODO (05) Call the MarsApi to enqueue the Retrofit request, implementing the callbacks
-        // 5.1 We call MarsAPI our singleton.Mars.getProperties which returns a call object
-        // 5.2 We then call enqueue on that callback to start the network request on a background thread
-        //     The enqueue method takes a retrofit callback class input that contains methods
-        //     that will be called when the request is complete.
-        //     The callback has both, success and failure methods, which are called accordingly when
-        //     retrofit is successful in fetching the JSON or an error occurs. So lets defin a Kotlin
-        //     object to implement this callback
-        // 5.3 I finish creating the object by pressing <CTRL><i> as a shortcut to implement methods
-        //      within Android Studio.
+        // TODO (18) Replace the enqueue() code with a coroutine for making the API request
+        // 18.1 We launch the coroutine that we just created. We're still executing code on the main thread.
+        coroutineScope.launch {
+            // TODO (19) Inside the coroutine, create a getPropertiesDeferred variable and assign
+            //  it a call to getProperties()
+            // 19.0 We call MarsAPI our singleton.Mars.getProperties which returns a call object
+            // 19.1 Create and starts the network call in a background thread, returning the deferred.
+            // 19.2 Calling await on the deferred returns the result from the network call when
+            //      the value is ready. Await is nonblocking, which means this will trigger our
+            //      API service to retrieve the data from the network without blocking our current
+            //      thread, which is important because we´re in the scope of the UI thread.
+            var getPropertiesDeferred = MarsApi.retrofitService.getProperties()
 
-        // TODO (13) Update getMarsRealEstateProperties to handle List<MarsProperty> instead of String
-        MarsApi.retrofitService.getProperties().enqueue(object: retrofit2.Callback<List<MarsProperty>>{
-
-            // 5.4 The _response is a string live data that determines what's shown in the TextView
-            //     Each states needs to update the _response live data
-            //     For onResponse, we have successfully gotten a response from our server.
-            //     So, we get the value using response.body()
-            override fun onResponse(call: Call<List<MarsProperty>>, response: Response<List<MarsProperty>>) {
-                _response.value = "Succes: ${response.body()?.size} Mars properties retrieved"
-
+            // TODO (20) Add a try/catch block with a call to getPropertiesDeferred.await().
+            //  Catch a generic Exception. Save the result from await().
+            try {
+                // Then return the list size (as before) in the success message
+                var listResult = getPropertiesDeferred.await()
+                _response.value = "Succes: ${listResult.size} Mars properties retrieved"
+            } catch (e: Exception){
+                // Returns the message from the exception in the failure message.
+                _response.value = "Failure: ${e.message}"
             }
-
-            // 5.5 For onFailure, we'll set response to failure plus the message from the throwable.
-            override fun onFailure(call: Call<List<MarsProperty>>, t: Throwable) {
-                _response.value = "Failure: " + t.message
-            }
-
-        })
-
-
-        _response.value = "Set the Mars API Response here __!"
+        }
+        _response.value = "Set the Mars API Response here!"
+    }
+    // TODO (21) override onCleared() and cancel the Job when the ViewModel is finished
+    // 21.1 The job is stopped when the OverviewViewModel is destroyed because the overviewFragment
+    //      will be gone.
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
 }
