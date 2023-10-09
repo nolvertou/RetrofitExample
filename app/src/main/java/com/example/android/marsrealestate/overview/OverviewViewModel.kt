@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android.marsrealestate.network.MarsApi
 import com.example.android.marsrealestate.network.MarsApiService
+import com.example.android.marsrealestate.network.MarsProperty
 import retrofit2.Call
 import retrofit2.Response
 import javax.security.auth.callback.Callback
@@ -59,19 +60,21 @@ class OverviewViewModel : ViewModel() {
         //     object to implement this callback
         // 5.3 I finish creating the object by pressing <CTRL><i> as a shortcut to implement methods
         //      within Android Studio.
-        MarsApi.retrofitService.getProperties().enqueue(object: retrofit2.Callback<String>{
+
+        // TODO (13) Update getMarsRealEstateProperties to handle List<MarsProperty> instead of String
+        MarsApi.retrofitService.getProperties().enqueue(object: retrofit2.Callback<List<MarsProperty>>{
 
             // 5.4 The _response is a string live data that determines what's shown in the TextView
             //     Each states needs to update the _response live data
             //     For onResponse, we have successfully gotten a response from our server.
             //     So, we get the value using response.body()
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                _response.value = response.body()
+            override fun onResponse(call: Call<List<MarsProperty>>, response: Response<List<MarsProperty>>) {
+                _response.value = "Succes: ${response.body()?.size} Mars properties retrieved"
 
             }
 
             // 5.5 For onFailure, we'll set response to failure plus the message from the throwable.
-            override fun onFailure(call: Call<String>, t: Throwable) {
+            override fun onFailure(call: Call<List<MarsProperty>>, t: Throwable) {
                 _response.value = "Failure: " + t.message
             }
 

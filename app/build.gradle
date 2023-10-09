@@ -70,16 +70,20 @@ dependencies {
     // Core with Ktx
     implementation "androidx.core:core-ktx:$version_core"
 
-    // Moshi
-    implementation "com.squareup.moshi:moshi:$version_moshi"
-    implementation "com.squareup.moshi:moshi-kotlin:$version_moshi"
-
     // TODO (1) Add Dependencies for Retrofit with Scalar Converter
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$version_retrofit"
-    implementation "com.squareup.retrofit2:converter-scalars:$version_retrofit"
+//    We are using MoshiConverterFactory instead ScalarsConverterFactory
+//    implementation "com.squareup.retrofit2:converter-scalars:$version_retrofit"
 
-    // Retrofit with Moshi Converter
+    // TODO (7) Add dependencies for Moshi, Moshi-Kotlin, and the Retrofit Moshi converter,
+    // We'll use the Moshi Library with Retrofit to parse the JSON into useful Mars property Kotlin
+    // objects and display the properties returned
+    // Moshi
+    implementation "com.squareup.moshi:moshi:$version_moshi"
+    implementation "com.squareup.moshi:moshi-kotlin:$version_moshi"
+    // Retrofit with Moshi
+    implementation "com.squareup.retrofit2:retrofit:$version_retrofit"
     implementation "com.squareup.retrofit2:converter-moshi:$version_retrofit"
 
     // Coroutines - Deprecated - No more required

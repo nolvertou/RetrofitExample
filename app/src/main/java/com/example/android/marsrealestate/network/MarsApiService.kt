@@ -17,12 +17,21 @@
 
 package com.example.android.marsrealestate.network
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 
 private const val BASE_URL = "https://mars.udacity.com/"
+
+
+// TODO (10) Use the Moshi Builder to create a Moshi Object with the KotlinJsonAdapterFactory
+// 10.1 We need to add the Kotlin JSON adapter factory, then we build our Moshi object
+private val moshi = Moshi.Builder()
+    .add(KotlinJsonAdapterFactory())
+    .build()
 
 // TODO (02) Use Retrofit Builder with ScalarsConverterFactory and BASE_URL
 // 2.1 We use Retrofit.Builder to fetch a JSON Response from our web service and return it as a string
@@ -30,13 +39,16 @@ private const val BASE_URL = "https://mars.udacity.com/"
 //     addConverterFactory in the builder with the instance of the ScalarsCoverterFactory
 // 2.3 Then we call BASE_URL to specify the route web address of our server endpoints
 // 2.4 Finally we call build to create the retrofit object
-
 /**
  * Add an instance of ScalarsConverterFactory and the BASE_URL we provided, then call build()
  * to create the Retrofit object.
  */
+// TODO (11) Change the ConverterFactory to the MoshiConverterFactory with our Moshi Object/
+// 11.1 We'll let retrofit know that it can use Moshi to convert the JSON response into Kotlin objects.
+//      So, we can then delete the ScalarsConverterFactory since we won't need it any longer and
+//      remove
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(ScalarsConverterFactory.create())
+    .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL)
     .build()
 
@@ -59,7 +71,8 @@ interface MarsApiService{
     @GET("realestate")
     // 3.4 Call object is used to start the request and create a retofit service
     fun getProperties():
-            Call<String>
+            // TODO (12) Update the MarsApiService to return a List of MarsProperty Objects
+            Call<List<MarsProperty>>
 }
 
 // TODO (04) Create the MarsApi object using Retrofit to implement the MarsApiService
