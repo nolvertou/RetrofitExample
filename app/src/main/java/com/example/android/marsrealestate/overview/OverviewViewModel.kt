@@ -21,27 +21,30 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android.marsrealestate.network.MarsApi
-import com.example.android.marsrealestate.network.MarsApiService
 import com.example.android.marsrealestate.network.MarsProperty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Response
-import javax.security.auth.callback.Callback
 
 /**
  * The [ViewModel] that is attached to the [OverviewFragment].
  */
 class OverviewViewModel : ViewModel() {
 
+    // TODO (23) In OverViewViewModel, rename response LiveData to status:
     // The internal MutableLiveData String that stores the status of the most recent request
-    private val _response = MutableLiveData<String>()
+    private val _status = MutableLiveData<String>()
 
     // The external immutable LiveData for the request status String
-    val response: LiveData<String>
-        get() = _response
+    val status: LiveData<String>
+        get() = _status
+
+    // TODO (24) Add an encapsulated LiveData<MarsProperty> property with an internal Mutable and
+    //  an external LiveData
+    private val _property = MutableLiveData<MarsProperty>()
+    val property: LiveData<MarsProperty>
+        get() = _property
 
     // TODO (17) Add variables for a coroutine Job and a CoroutineScope using the Main Dispatcher
     // 17.1 Create Job because we are working with Coroutines
@@ -81,13 +84,19 @@ class OverviewViewModel : ViewModel() {
             try {
                 // Then return the list size (as before) in the success message
                 var listResult = getPropertiesDeferred.await()
-                _response.value = "Succes: ${listResult.size} Mars properties retrieved"
+                _status.value = "Succes: ${listResult.size} Mars properties retrieved"
+
+                // TODO (25) Update to set _property to the first MarsProperty from listResult
+                if(listResult.size > 0){
+                    _property.value = listResult[0]
+                }
+
             } catch (e: Exception){
                 // Returns the message from the exception in the failure message.
-                _response.value = "Failure: ${e.message}"
+                _status.value = "Failure: ${e.message}"
             }
         }
-        _response.value = "Set the Mars API Response here!"
+        _status.value = "Set the Mars API Response here!"
     }
     // TODO (21) override onCleared() and cancel the Job when the ViewModel is finished
     // 21.1 The job is stopped when the OverviewViewModel is destroyed because the overviewFragment
