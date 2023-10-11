@@ -63,5 +63,4 @@ class PhotoGridAdapter : ListAdapter<MarsProperty, PhotoGridAdapter.MarsProperty
             binding.executePendingBindings() // Tthis causes the property update to execute immediately
         }
     }
-
 }

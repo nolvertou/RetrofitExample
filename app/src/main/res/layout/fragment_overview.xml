@@ -35,6 +35,7 @@
 
         <!-- TODO (36)  replace the TextView with a RecyclerView, using a GridLayoutManager to display
                 items in a 2-column grid -->
+        <!-- TODO (44) add an attribute to the RecyclerView to set clipToPadding to false -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photos_grid"
             android:layout_width="0dp"
@@ -51,5 +52,16 @@
             tools:itemCount="16"
             tools:listitem="@layout/grid_view_item" />
 
+        <!-- TODO (49) In fragment_overview, add a status_image ImageView to the ConstraintLayout-->
+        <ImageView
+            android:id="@+id/status_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:marsApiStatus="@{viewModel.status}"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

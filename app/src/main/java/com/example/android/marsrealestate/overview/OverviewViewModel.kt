@@ -31,13 +31,17 @@ import kotlinx.coroutines.launch
  * The [ViewModel] that is attached to the [OverviewFragment].
  */
 class OverviewViewModel : ViewModel() {
+    // TODO (45) create a MarsApiStatus enum with LOADING, ERROR, DONE states
+    enum class MarsApiStatus {LOADING, ERROR, DONE}
+
 
     // TODO (23) In OverViewViewModel, rename response LiveData to status:
     // The internal MutableLiveData String that stores the status of the most recent request
-    private val _status = MutableLiveData<String>()
+    private val _status = MutableLiveData<MarsApiStatus>()
 
+    // TODO (46) Change _status type from String to MarsApiStatus
     // The external immutable LiveData for the request status String
-    val status: LiveData<String>
+    val status: LiveData<MarsApiStatus>
         get() = _status
 
     // TODO (24) Add an encapsulated LiveData<MarsProperty> property with an internal Mutable and
@@ -83,24 +87,25 @@ class OverviewViewModel : ViewModel() {
 
             // TODO (20) Add a try/catch block with a call to getPropertiesDeferred.await().
             //  Catch a generic Exception. Save the result from await().
+
+            // TODO (47) In getMarsRealEstateProperties(), using the enums defined above,
+            //  set _status value to LOADING, DONE, or ERROR. In the error case, clear the
+            //  properties LiveData by setting it to a new empty ArrayList
             try {
+                _status.value = MarsApiStatus.LOADING
+
                 // Then return the list size (as before) in the success message
                 var listResult = getPropertiesDeferred.await()
-                _status.value = "Succes: ${listResult.size} Mars properties retrieved"
 
-                // TODO (25) Update to set _property to the first MarsProperty from listResult
-                // TODO (33) Then update getMarsRealEstateProperties() to return the entire list
-                //  instead of just one item
-                if(listResult.size > 0){
-                    _properties.value = listResult
-                }
+                _status.value = MarsApiStatus.DONE
+                _properties.value = listResult
 
             } catch (e: Exception){
+                _status.value = MarsApiStatus.ERROR
                 // Returns the message from the exception in the failure message.
-                _status.value = "Failure: ${e.message}"
+                _properties.value = ArrayList()
             }
         }
-        _status.value = "Set the Mars API Response here!"
     }
     // TODO (21) override onCleared() and cancel the Job when the ViewModel is finished
     // 21.1 The job is stopped when the OverviewViewModel is destroyed because the overviewFragment
