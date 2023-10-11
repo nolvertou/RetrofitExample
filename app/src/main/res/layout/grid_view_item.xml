@@ -21,13 +21,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- TODO (28) Add the viewModel data variable to this layout -->
+    <!-- TODO (33) In grid_view_item.xml replace the viewModel variable with a property of
+            type MarsProperty-->
     <data>
         <variable
-            name="viewModel"
-            type="com.example.android.marsrealestate.overview.OverviewViewModel" />
+            name="property"
+            type="com.example.android.marsrealestate.network.MarsProperty" />
     </data>
 
     <!-- TODO (29) Set the app:imageUrl attribute to viewModel.property.imgSrcUrl -->
+    <!-- TODO (34) Then update the binding in mars_image to reflect the variable change-->
     <ImageView
         android:id="@+id/mars_image"
         android:layout_width="match_parent"
@@ -35,6 +38,6 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:padding="2dp"
-        app:imageUrl="@{viewModel.property.imgSrcUrl}"
+        app:imageUrl="@{property.imgSrcUrl}"
         tools:src="@tools:sample/backgrounds/scenic"/>
 </layout>

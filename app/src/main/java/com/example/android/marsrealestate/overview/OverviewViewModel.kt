@@ -42,9 +42,11 @@ class OverviewViewModel : ViewModel() {
 
     // TODO (24) Add an encapsulated LiveData<MarsProperty> property with an internal Mutable and
     //  an external LiveData
-    private val _property = MutableLiveData<MarsProperty>()
-    val property: LiveData<MarsProperty>
-        get() = _property
+
+    // TODO (32) In OverviewViewModel rename _property to _properties, and assign it a List of MarsProperty
+    private val _properties = MutableLiveData<List<MarsProperty>>()
+    val properties: LiveData<List<MarsProperty>>
+        get() = _properties
 
     // TODO (17) Add variables for a coroutine Job and a CoroutineScope using the Main Dispatcher
     // 17.1 Create Job because we are working with Coroutines
@@ -87,8 +89,10 @@ class OverviewViewModel : ViewModel() {
                 _status.value = "Succes: ${listResult.size} Mars properties retrieved"
 
                 // TODO (25) Update to set _property to the first MarsProperty from listResult
+                // TODO (33) Then update getMarsRealEstateProperties() to return the entire list
+                //  instead of just one item
                 if(listResult.size > 0){
-                    _property.value = listResult[0]
+                    _properties.value = listResult
                 }
 
             } catch (e: Exception){

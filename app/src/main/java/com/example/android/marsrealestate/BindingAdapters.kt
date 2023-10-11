@@ -20,8 +20,11 @@ package com.example.android.marsrealestate
 import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.android.marsrealestate.network.MarsProperty
+import com.example.android.marsrealestate.overview.PhotoGridAdapter
 
 // TODO (27) Create the Binding Adapter, converting the imgUrl to a URI with the https scheme
 // 27.1 We're going to build a binding adapter that will take the URL from an XML attribute
@@ -50,4 +53,12 @@ fun bindImage(imgView: ImageView, imgUrl: String?){
                 .placeholder(R.drawable.loading_animation))
             .into(imgView)
     }
+}
+
+// TODO (43) add a bindRecyclerView binding adapter for listData, and have it call submitList()
+//  on the PhotosGridAdapter
+@BindingAdapter("listData")
+fun bindRecyclerView(recyclerView: RecyclerView, data: List<MarsProperty>?) {
+    val adapter = recyclerView.adapter as PhotoGridAdapter
+    adapter.submitList(data)
 }

@@ -96,6 +96,7 @@ dependencies {
     // Glide
     implementation "com.github.bumptech.glide:glide:$version_glide"
 
+    // TODO (31) Add the Gradle dependency for the RecyclerView
     // RecyclerView
     implementation "androidx.recyclerview:recyclerview:$version_recyclerview"
 

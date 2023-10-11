@@ -45,13 +45,18 @@ class OverviewFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         // TODO (30) Replace FragmentOverviewBinding with GridViewItemBinding
-        val binding = GridViewItemBinding.inflate(inflater)
+        // TODO (35) In OverviewFragment inflate a FragmentOverviewBinding instead of a GridViewItemBinding
+        val binding = FragmentOverviewBinding.inflate(inflater)
 
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
         // Giving the binding access to the OverviewViewModel
         binding.viewModel = viewModel
+
+        // TODO (44) set the adapter in the RecyclerView (the photosGrid.adapter in the binding object)
+        //  to a new PhotoGridAdapter
+        binding.photosGrid.adapter = PhotoGridAdapter()
 
         setHasOptionsMenu(true)
         return binding.root
