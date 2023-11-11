@@ -52,6 +52,12 @@ class OverviewViewModel : ViewModel() {
     val properties: LiveData<List<MarsProperty>>
         get() = _properties
 
+    // TODO (61): In OverviewViewModel, add an encapsulated LiveData variable for navigating
+    //  to the selectedProperty detail screen
+    private val _navigateToSelectedProperty = MutableLiveData<MarsProperty>()
+    val navigateToSelectedProperty: LiveData<MarsProperty>
+        get() = _navigateToSelectedProperty
+
     // TODO (17) Add variables for a coroutine Job and a CoroutineScope using the Main Dispatcher
     // 17.1 Create Job because we are working with Coroutines
     private var viewModelJob = Job()
@@ -113,5 +119,18 @@ class OverviewViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+    }
+
+    // TODO (62): Add a function to set _navigateToSelectedProperty to marsProperty and
+    //  initiate navigation to the detail screen on button click
+    fun displayPropertyDetails(marsProperty: MarsProperty){
+        _navigateToSelectedProperty.value = marsProperty
+    }
+
+    // TODO (63): and you'll need to add displayPropertyDetailsComplete() to set
+    //  _navigateToSelectedProperty to false once navigation is completed to prevent
+    //  unwanted extra navigations
+    fun displayPropertyDetailsComplete(){
+        _navigateToSelectedProperty.value = null
     }
 }

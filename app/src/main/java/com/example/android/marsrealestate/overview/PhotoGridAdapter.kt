@@ -28,7 +28,9 @@ import com.example.android.marsrealestate.databinding.GridViewItemBinding
 import com.example.android.marsrealestate.network.MarsProperty
 
 // TODO (37) Create PhotoGridAdapter that extends the RecyclerView ListAdapter with DiffCallback
-class PhotoGridAdapter : ListAdapter<MarsProperty, PhotoGridAdapter.MarsPropertyViewHolder>(DiffCallback) {
+// TODO (65) Add an OnClickListener parameter to the PhotoGridAdapter class declaration
+class PhotoGridAdapter(private val onClickListener: OnClickListener)
+    : ListAdapter<MarsProperty, PhotoGridAdapter.MarsPropertyViewHolder>(DiffCallback) {
 
     // TODO (40): Create the DiffCallback companion object and override its two required
     //  areItemsTheSame() methods:
@@ -51,6 +53,10 @@ class PhotoGridAdapter : ListAdapter<MarsProperty, PhotoGridAdapter.MarsProperty
 
     override fun onBindViewHolder(holder: PhotoGridAdapter.MarsPropertyViewHolder, position: Int) {
         val marsProperty = getItem(position)
+        // TODO (66) In onBindViewHolder(), set up onClickListener() to pass marsProperty on button click
+        holder.itemView.setOnClickListener {
+            onClickListener.clickListener(marsProperty)
+        }
         holder.bind(marsProperty)
     }
 
@@ -62,5 +68,11 @@ class PhotoGridAdapter : ListAdapter<MarsProperty, PhotoGridAdapter.MarsProperty
             binding.property = marsProperty
             binding.executePendingBindings() // Tthis causes the property update to execute immediately
         }
+    }
+
+    // TODO (64): InPhotoGridAdapter, create an internal OnClickListener class with a lambda in
+    //  its constructor that initializes a matching onClick function
+    class OnClickListener(val clickListener: (marsProperty: MarsProperty) -> Unit){
+        fun onClick(marsProperty: MarsProperty) = clickListener(marsProperty)
     }
 }

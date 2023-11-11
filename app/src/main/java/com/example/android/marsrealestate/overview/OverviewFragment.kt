@@ -20,7 +20,9 @@ package com.example.android.marsrealestate.overview
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.android.marsrealestate.R
 import com.example.android.marsrealestate.databinding.FragmentOverviewBinding
 import com.example.android.marsrealestate.databinding.GridViewItemBinding
@@ -54,9 +56,21 @@ class OverviewFragment : Fragment() {
         // Giving the binding access to the OverviewViewModel
         binding.viewModel = viewModel
 
-        // TODO (44) set the adapter in the RecyclerView (the photosGrid.adapter in the binding object)
-        //  to a new PhotoGridAdapter
-        binding.photosGrid.adapter = PhotoGridAdapter()
+        // TODO (67): InOverviewFragment, update the PhotosGridAdapter binding to add a click listener
+        //  that passes the selected property to viewModel.displayPropertyDetails(), which will trigger
+        //  the livedata
+        binding.photosGrid.adapter = PhotoGridAdapter(PhotoGridAdapter.OnClickListener{
+            viewModel.displayPropertyDetails(it)
+        })
+
+        // TODO (69): In OverviewFragment, add an observer on navigateToSelectedProperty that
+        //  calls navigate() to go to the detail screen when the MarsProperty is not null.
+        viewModel.navigateToSelectedProperty.observe(this, Observer {
+            if(null != it){
+                this.findNavController().navigate(OverviewFragmentDirections.actionShowDetail(it))
+                viewModel.displayPropertyDetailsComplete()
+            }
+        })
 
         setHasOptionsMenu(true)
         return binding.root

@@ -19,7 +19,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: "androidx.navigation.safeargs"
+apply plugin: "androidx.navigation.safeargs" // TODO (53): Add the safeargs plugin
 
 android {
     compileSdkVersion 33
@@ -46,6 +46,12 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    // TODO (51) Set experimental extensions equals true
+    // because what we're about to use still is considered experimental
+    androidExtensions{
+        experimental = true
     }
 }
 
